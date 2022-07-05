@@ -12,5 +12,5 @@ type event struct {
 }
 
 func (e *event) Publish(ctx context.Context, msg interface{}, opts ...client.PublishOption) error {
-	return e.c.Publish(ctx, e.c.NewMessage(e.topic, msg), opts...)
+	return e.c.Publish(ctx, e.c.NewMessage(e.topic, e.topic, msg), opts...)
 }
