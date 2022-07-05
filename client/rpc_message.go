@@ -2,11 +2,12 @@ package client
 
 type message struct {
 	topic       string
+	headerTopic string
 	contentType string
 	payload     interface{}
 }
 
-func newMessage(topic string, payload interface{}, contentType string, opts ...MessageOption) Message {
+func newMessage(topic string, headerTopic string, payload interface{}, contentType string, opts ...MessageOption) Message {
 	var options MessageOptions
 	for _, o := range opts {
 		o(&options)
@@ -19,6 +20,7 @@ func newMessage(topic string, payload interface{}, contentType string, opts ...M
 	return &message{
 		payload:     payload,
 		topic:       topic,
+		headerTopic: headerTopic,
 		contentType: contentType,
 	}
 }
@@ -30,7 +32,9 @@ func (m *message) ContentType() string {
 func (m *message) Topic() string {
 	return m.topic
 }
-
+func (m *message) HeaderTopic() string {
+	return m.headerTopic
+}
 func (m *message) Payload() interface{} {
 	return m.payload
 }

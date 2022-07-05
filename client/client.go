@@ -14,7 +14,7 @@ import (
 type Client interface {
 	Init(...Option) error
 	Options() Options
-	NewMessage(topic string, msg interface{}, opts ...MessageOption) Message
+	NewMessage(topic, headerTopic string, msg interface{}, opts ...MessageOption) Message
 	NewRequest(service, endpoint string, req interface{}, reqOpts ...RequestOption) Request
 	Call(ctx context.Context, req Request, rsp interface{}, opts ...CallOption) error
 	Stream(ctx context.Context, req Request, opts ...CallOption) (Stream, error)
@@ -30,6 +30,7 @@ type Router interface {
 // Message is the interface for publishing asynchronously
 type Message interface {
 	Topic() string
+	HeaderTopic() string
 	Payload() interface{}
 	ContentType() string
 }
@@ -135,7 +136,12 @@ func Publish(ctx context.Context, msg Message, opts ...PublishOption) error {
 
 // Creates a new message using the default client
 func NewMessage(topic string, payload interface{}, opts ...MessageOption) Message {
-	return DefaultClient.NewMessage(topic, payload, opts...)
+	return DefaultClient.NewMessage(topic, topic, payload, opts...)
+}
+
+// Creates a new message using the default client
+func NewMessageWithHeader(topic, headerTopic string, payload interface{}, opts ...MessageOption) Message {
+	return DefaultClient.NewMessage(topic, headerTopic, payload, opts...)
 }
 
 // Creates a new request using the default client. Content Type will

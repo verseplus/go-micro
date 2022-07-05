@@ -575,7 +575,7 @@ func (r *rpcClient) Publish(ctx context.Context, msg Message, opts ...PublishOpt
 
 	id := uuid.New().String()
 	md["Content-Type"] = msg.ContentType()
-	md["Micro-Topic"] = msg.Topic()
+	md["Micro-Topic"] = msg.HeaderTopic()
 	md["Micro-Id"] = id
 
 	// set the topic
@@ -606,7 +606,7 @@ func (r *rpcClient) Publish(ctx context.Context, msg Message, opts ...PublishOpt
 			Type:   codec.Event,
 			Header: map[string]string{
 				"Micro-Id":    id,
-				"Micro-Topic": msg.Topic(),
+				"Micro-Topic": msg.HeaderTopic(),
 			},
 		}, msg.Payload()); err != nil {
 			return errors.InternalServerError("go.micro.client", err.Error())
@@ -629,8 +629,8 @@ func (r *rpcClient) Publish(ctx context.Context, msg Message, opts ...PublishOpt
 	}, broker.PublishContext(options.Context))
 }
 
-func (r *rpcClient) NewMessage(topic string, message interface{}, opts ...MessageOption) Message {
-	return newMessage(topic, message, r.opts.ContentType, opts...)
+func (r *rpcClient) NewMessage(topic, headerTopic string, message interface{}, opts ...MessageOption) Message {
+	return newMessage(topic, headerTopic, message, r.opts.ContentType, opts...)
 }
 
 func (r *rpcClient) NewRequest(service, method string, request interface{}, reqOpts ...RequestOption) Request {
